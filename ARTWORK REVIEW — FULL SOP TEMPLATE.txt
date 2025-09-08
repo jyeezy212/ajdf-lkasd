@@ -1,0 +1,381 @@
+ARTWORK REVIEW — FULL SOP TEMPLATE (TXT, Long Version, Region Inference Enabled)
+
+PURPOSE
+- Provide a single, enforceable standard for packaging & copy verification across Copy Doc and Artwork files.
+- Ensure reviewers produce consistent, table-only outputs with zero prose drift.
+- Prevent false flags by mandating a high-magnification “Zoom & Verify” pass before any issue is recorded.
+
+USAGE
+- Save this as a .txt file (UTF-8) and follow exactly. All outputs MUST use the schemas below.
+- Preserve all emojis and symbols exactly as shown. Do not add or remove columns.
+
+GLOBAL RULES (R)
+R0 Preserve all emojis exactly as shown. Do not substitute or omit.
+R1 Output ONLY the step header line plus the required table(s) or blocks—no extra prose before/after.
+R2 Keep column headers and column order exactly as specified. Do not add columns unless a step explicitly allows “Add rows as needed.”
+R3 Status icons: ✅ Match/Pass, ⚠️ Needs Attention, ❌ Fix Required. Use consistently across steps.
+R4 Unknown values = “TBD”; use “Unspecified” only where explicitly indicated (e.g., Round/Version in Step 1).
+R5 Quote source text exactly (punctuation, casing, accents/diacritics, hyphen vs en dash, apostrophes, trademark symbols); do not paraphrase in “Value” columns.
+R6 Units & numbers:
+   - Keep native units; when a conversion is required by a step, show both source and computed values.
+   - Decimal separator = period “.”; thousands separator = none (e.g., 1,500 → 1500 unless part of quoted text).
+   - Significant figures: preserve as printed when quoting; computed values follow each step’s rounding rules.
+R7 Dates: MM-DD-YYYY. Times (if any): 24-hour HH:MM with timezone if relevant.
+R8 Evidence references must specify location (e.g., “Copy Doc p3 line 12” or “Artwork PDF p2, FOP panel, lower-left”).
+R9 Sourcing preference when values conflict:
+   - Names & mandatory copy: Copy Doc > Artwork; if unresolved, mark “TBD” and add note in the step’s “Notes/Evidence.”
+   - Regulatory data (e.g., INCI ingredients, warnings): follow region rulebooks if present; else Copy Doc precedence.
+R10 ZOOM & VERIFY (MANDATORY): Before flagging any text, zoom to ≥200% (up to 400% if needed) and compare character-by-character to the Copy Doc. Verify punctuation, casing, diacritics, line breaks, spacing, and symbol fidelity. For vector art, check live text properties; for raster art, inspect at native resolution. Only record ⚠️/❌ after this pass.
+R11 Language handling:
+   - If a step requires multi-language alignment, create separate rows per language or a language-pair matrix as specified.
+   - Do not auto-translate; only compare what exists in source files.
+R12 Region Inference (when not explicit)
+   • If “Regions in Scope” is not explicitly stated in any source, infer and label each inferred region with “(inferred)”.
+   • Cue priority (highest → lowest):
+     1) Regulatory/Responsible-person addresses (e.g., “amika … USA”; “BIORIUS … EU”; “UK: … GB”).
+     2) Mandatory language blocks by jurisdiction (e.g., EN/FR for 🇨🇦; EN/DE/FR/ES clusters for 🇪🇺/🇬🇧).
+     3) Jurisdictional symbols/marks (EU/UK RP address, market-specific icons).
+   • Evidence required: cite the basis in H. Score & Summary “Notes” (e.g., “Copy Doc p3 line 12; Artwork BOP address panel”).
+   • If cues conflict or remain ambiguous, set “TBD”.
+R13 Table integrity:
+   - No blank header rows, no trailing blank rows. Keep text wrapping minimal; if a quote is long, keep it intact.
+R14 Screenshots (for Step G): crop tightly, mark with rectangles/arrows, and ensure legibility at 100% display. Assign a unique ID [G-###].
+R15 File references: include exact filenames (with extensions) and versions/dates as present in metadata or filenames.
+R16 Privacy & IP: redact or omit any confidential internal codes not necessary for verification, unless they are printed on artwork.
+R17 Accessibility: when listing icons/symbols, provide a short textual label (e.g., “Leaping Bunny,” “PAO 12M,” “Mobius loop 1”).
+R18 Step/Scope Isolation
+- Each step and sub-step has its own schema and rules. Do not generalize or carry rules from one step to another.
+- When multiple steps touch similar content (e.g., 3A vs 3B), apply only that step's language scope, columns, status logic, and evidence requirements.
+- If a step's rules appear to conflict with another step's rules, the step-specific rules prevail for that step (Global Rules still apply universally).
+- Output must conform exactly to the current step's table headers, column order, allowed icons, and language scope.
+- No inferred carry-overs (e.g., multi-language checks in 3A do not imply multi-language outputs in 3B if 3B is EN-only).
+
+EXECUTION INSTRUCTION (non-output)
+- Before rendering each step, validate:
+  - Schema match: headers and column order exactly equal to that step's schema.
+  - Language scope: enforce step-specific scope (e.g., 3B = EN-only).
+  - Icon set: only the status icons allowed by that step.
+- If any validation fails, stop and correct before producing output.
+- For every step below, apply the relevant Global Rules (R0–R18) internally.
+- Do NOT display any rule numbers or references in the user-facing output.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+1️⃣ Project Header
+
+| Field | Fill In |
+|---|---|
+| Project Name | <derived from copy/artwork files only> |
+| Round / Version | <as provided; if unknown write “Unspecified”> |
+| Regions in Scope | <flags/regions; append “(inferred)” if derived via R12; else “TBD”> |
+| Due Date | <MM-DD-YYYY; else “TBD”> |
+
+Helper — Use this exact line for the “Regions in Scope” row:
+| Regions in Scope | <flags/regions; append “(inferred)” if derived via R12; else “TBD”> |
+
+Sourcing Hierarchy for Step 1
+- Project Name: Copy Doc > Artwork filename > Artwork display name on FOP; else “TBD”.
+- Round/Version: Request text, file naming, or visible version notes; else “Unspecified”.
+- Regions: If explicit, list them. If not explicit, infer per R12 and label “(inferred)”; if cues conflict/ambiguous, set “TBD” and record evidence in H → Notes.
+- Due Date: Request text, tracker, or filename date; else “TBD”.
+
+(Examples are not for output: Regions may be flags like 🇺🇸 🇨🇦 🇪🇺 🇬🇧 or ISO region names if no flags are present.)
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+2️⃣ Files to Attach
+
+| Type | Filename | Status |
+|---|---|---|
+| Copy Document | <file.docx/pdf/image> | ✅/❌  |
+| Final Artwork (flattened/ai) | <file.pdf/file.ai> | ✅/❌ |
+
+Rules for Step 2
+- ❌ if a required file is missing or unreadable; ✅ only when fully correct and accessible.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+A. Copy Quality
+
+| Language | Original Text | Recommendation | Status | Evidence (page/line) |
+|---|---|---|---|---|
+| EN | <quote exact> | <ready-to-paste fix> | ✅/⚠️/❌ | <p#, line#> |
+
+Rules for Step A
+- Begin by reviewing the Copy Document only.
+- Check each non-English translation (FR, ES, DE, etc.) against the English line for **semantic accuracy, tone, and completeness**.
+- If the translation is **inaccurate**, **incomplete**, or **mismatched in tone**, mark ❌ and recommend a corrected string.
+- Only after confirming accuracy in the Copy Document should you check the matching Artwork file.
+- Use “✅” if the line is both accurate in the Copy Document **and** matches the Artwork.  
+- One row per language for all languages. Do not paraphrase; quote all strings exactly.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+B. Claim Risk
+
+| Language | Claim (quote) | Risk Level | Rationale | Region(s) Impacted | Action | Status |
+|---|---|---|---|---|---|---|
+| EN | “<exact claim>” | Low/Medium/High | <why risky or compliant> | <All/USA/EU/CA/UK/etc.> | Keep/Modify/Remove | ⚠️/❌ |
+
+Rules for Step B
+- Quote claims verbatim. Group identical claims; otherwise separate rows.
+- Only quote English claims
+- Risk Level (triage):
+  • Low: Qualifiers present, puffery, commonly accepted claims.
+  • Medium: Performance claims implying measurable outcomes without visible substantiation.
+  • High: Drug-like/therapeutic claims, superiority claims without substantiation, regulated terms.
+- Action: Keep (no change), Modify (add qualifier/footnote), Remove (not permitted).
+- If no risky claims, include a single row “No risky claims identified” with ✅.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+C. Label-Claim Conversion
+
+| Source | Declared (mL) | Calculated (fl oz) | Declared (fl oz) | Within ±0.10 | Status | Result |
+|---|---|---|---|---|---|---|
+| Copy Doc / Artwork | <e.g., 150> | <mL ÷ 29.5735 → 2 decimals> | <as printed> | Yes/No | ✅/❌ | Suggested action item |
+
+Rules for Step C
+- Calculated (fl oz) = mL ÷ 29.5735, rounded to 2 decimals (standard rounding; .005 rounds up).
+- Tolerance: ±0.10 fl oz. If |Declared − Calculated| > 0.10 → ❌. If ≤ 0.10 → ✅. If Declared missing → ❌.
+- Add a separate row for each distinct size/SKU found in BOTH Copy Doc and Artwork. If present in one but not the other, still list with a note.
+- If fl oz is printed but mL is missing (or vice versa), compute the missing side and mark ❌ unless both are present and within tolerance.
+- Do NOT use grams (G) as part of calculation
+
+Quick-Reference — mL → fl oz (append verbatim)
+| mL | Correct fl oz |
+|---|---|
+| 5 | 0.17 |
+| 10 | 0.34 |
+| 15 | 0.51 |
+| 30 | 1.01 |
+| 50 | 1.69 |
+| 150 | 5.07 |
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+D. Artwork Match
+
+| Field | Copy Doc Value | Artwork Value | Match | Notes (panel/page) |
+|---|---|---|---|---|
+| Product Name | <quote> | <quote> | ✅/⚠️/❌ | <FOP/PDP/panel #> |
+| Variant/Scent | <quote> | <quote> | ✅/⚠️/❌ |  |
+| Net Contents | <quote> | <quote> | ✅/⚠️/❌ |  |
+| Usage/Directions | <quote> | <quote> | ✅/⚠️/❌ |  |
+| Warnings | <quote> | <quote> | ✅/⚠️/❌ |  |
+| Ingredients | <quote> | <quote> | ✅/⚠️/❌ |  |
+| Claims/Icons | <list icons + quotes> | <list icons + quotes> | ✅/⚠️/❌ |  |
+| Language Blocks | <languages shown> | <languages shown> | ✅/⚠️/❌ |  |
+| Address/Distributor | <quote> | <quote> | ✅/⚠️/❌ |  |
+| Website/Social | <quote> | <quote> | ✅/⚠️/❌ |  |
+| Lot/Batch/PAO/Recycling | <symbols/text> | <symbols/text> | ✅/⚠️/❌ |  |
+
+Rules for Step D
+- Match criteria:
+  • ✅ Exact text/symbol match (line breaks/soft wraps allowed).
+  • ⚠️ Minor formatting/layout variance that does not alter meaning.
+  • ❌ Text/symbols differ, missing, or extra.
+- Icons: list by common name (e.g., “Leaping Bunny”), confirm presence/absence; include PAO value (e.g., “12M”) if printed.
+- Add rows for additional mandatory items by target regions (e.g., “Made in,” recycling codes, allergen statements).
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+E. Font Size
+
+| Text String / Field | Jurisdiction | Required Min (pt) | Measured Min (pt) | Method | Status | Screenshot ID |
+|---|---|---|---|---|---|---|
+| <e.g., INGREDIENTS> | <USA cosmetics> | 6.0 | <measured> | Vector/Bitmap | ✅/❌ | <G-###> |
+
+Rules for Step E
+- Minimum: 6.0 pt (≈ 2.12 mm) for mandatory text unless stricter regional rules apply.
+- Measurement:
+  • Vector: read font size property from live text.
+  • Bitmap/outlined: measure x-height or cap height via pixels-to-pt/mm; document calc if contested.
+- Anything < 6.0 pt = ❌. Borderline (e.g., 5.98) = ❌ unless vector evidence proves 6.0+.
+- Every ❌ must link to a Step G screenshot with overlay.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+F. Barcode
+
+| Symbology | Encoded Digits | Check Digit Valid | X-Dim (mm) | Quiet Zone (mm) | Module Count | Print Contrast | Scan Test |
+|---|---|---|---|---|---|---|---|
+| UPC-A / EAN-13 | <digits> | Yes/No | <value> | <value> | <value> | Yes/No | Pass/Fail |
+
+Rules for Step F
+- Decode using a standard reader; record EXACT digits (including leading zeros). Human-readable text is implied by digits.
+- X-Dim and Quiet Zone must meet symbology standards (e.g., UPC-A quiet zone ≥ 10× module). If unknown, record “TBD” and mark ⚠️ with rationale.
+- Print Contrast: “Yes” if high contrast on intended substrate; “No” if low contrast/patterned background.
+- Scan Test: Pass only if decoded from representative print or high-quality proof. Digital-only → ⚠️ with note “digital proof only.”
+- Include a Step G screenshot of the decode result for any ⚠️/❌.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+G. Visual Snapshots
+
+For every ⚠️ or ❌, add a numbered block exactly as follows:
+
+[G-001]
+Screenshot: <paste image here>
+Caption — What: <what is wrong>
+Caption — Where: <panel/page/coordinates if relevant>
+Caption — Fix: <exact correction to make>
+Linked Rows: <e.g., D: Product Name; E: Font Size row 2; F: Barcode>
+Status After Fix: TBD
+
+Rules for Step G
+- Each issue gets its own block with a unique ID in ascending order (G-001, G-002, …).
+- Use clear rectangles/arrows; ensure the problem text/symbol is legible.
+- If one screenshot supports multiple table rows, list all Linked Rows separated by semicolons.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+H. Score & Summary
+
+Score Formula: Score = Matches ÷ Checks × 100
+
+| Area | Checks | Matches | Score % | Notes |
+|---|---|---|---|---|
+| Copy Quality (A) | <#> | <#> | <auto> | <brief> |
+| Claim Risk (B) | <#> | <#> | <auto> |  |
+| Conversion (C) | <#> | <#> | <auto> |  |
+| Artwork Match (D) | <#> | <#> | <auto> |  |
+| Font Size (E) | <#> | <#> | <auto> |  |
+| Barcode (F) | <#> | <#> | <auto> |  |
+| TOTAL | <sum> | <sum> | <computed> |  |
+
+Top Fixes (❌):
+- <bullet 1>
+- <bullet 2>
+
+Attention (⚠️):
+- <bullet 1>
+
+Next Steps:
+- <owner> to <action> by <MM-DD-YYYY>
+
+Scoring Notes
+- “Checks” = number of discrete items reviewed in the step (rows or individual mandated elements).
+- “Matches” = count of ✅ outcomes only. ⚠️ and ❌ both count as 0 in the score; list them under Attention/Top Fixes.
+- Round final Score % to nearest whole number unless otherwise requested.
+- Region Inference evidence: If regions were inferred per R12, include the evidence source(s) here (e.g., “Copy Doc p3 line 12; Artwork BOP address panel”).
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+4️⃣ Optional Fields
+
+| Field | Content |
+|---|---|
+| Version-Change Log | See table below |
+| Creative Brand-Voice Check | See table below |
+| One-Page PDF Summary Export | <filename or “TBD”> |
+
+Version-Change Log
+| Item | Before | After | Owner | Date (MM-DD-YYYY) |
+|---|---|---|---|---|
+
+Creative Brand-Voice Check
+| Language | Sample Line (quote) | Voice Fit (1–5) | Notes |
+|---|---|---|---|
+
+Rules for Step 4
+- If Optional Fields are not requested, include the 4️⃣ header and a single row “Not requested” (Content column) in the main table.
+- Voice Fit: 1 = off-brand; 5 = perfect fit. Keep Notes concise and actionable (e.g., “Use friendlier verbs; avoid clinical tone”).
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+5️⃣ Special Notes / Constraints
+
+| Constraint | Source (Retailer/Reg/Brand) | Applies To (Region/Panel) | Notes |
+|---|---|---|---|
+| <…> | <…> | <…> | <…> |
+
+Rules for Step 5
+- One row per constraint. If none provided, include one row with “None stated” and ✅ in Notes or an explicit “None stated” value.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+APPENDIX — QUICK CHECKS & BEST PRACTICES (REFERENCE ONLY; NOT FOR OUTPUT)
+
+A. Quick punctuation & typography triage
+- Use true ellipses (…) not three periods (...), true en dash (–) for ranges (e.g., 5–10), true em dash (—) for breaks.
+- Smart quotes “ ”, apostrophes ’, trademark ™ and registered ® as per Copy Doc; do not invent symbols.
+
+B. Line breaking
+- Soft wraps are acceptable; do not force hyphenation unless artwork shows it. Never change words to fit a line.
+
+C. Ingredient lists
+- Preserve order and punctuation exactly. If commas vs semicolons differ between sources, treat as ❌ unless a regional rule dictates otherwise.
+
+D. Icons (common)
+- PAO (e.g., “12M”), recycling Mobius loop with/without code, Leaping Bunny/other cruelty-free marks, FSC, e-commerce symbols. Record presence and exact printed values.
+
+E. Screenshot naming (suggested)
+- Use pattern: G-###_<step>_<shortdesc>.png (e.g., G-002_FontSize_Ingredients.png).
+
+F. File naming (suggested)
+- ProjectName_Size_Version_Date.ext (e.g., un.done-TextureSpray_5.3oz_v2_2025-09-05.pdf).
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+Region Inference — Quick-Ref
+• “amika … USA” → 🇺🇸 USA (inferred)
+• “BIORIUS … Wavre, BE (EU)” → 🇪🇺 EU (inferred)
+• “UK: London … GB” or UK RP icon → 🇬🇧 UK (inferred)
+• EN/FR bilingual compliance blocks → 🇨🇦 Canada (inferred)
+
+Legend
+✅ Match / Pass  ⚠️ Needs Attention  ❌ Fix Required
+
+🆕 NEW PROJECT – PACKAGING & COPY VERIFICATION 
+(Packaging Dev · Regulatory Compliance · Creative Tone · Marketing Claims) 
+
+1️⃣ Project Header 
+Field	Fill In 
+Project Name	[e.g., amika un.done Texture Spray 5.3 oz] 
+Round / Version	[Round 1, v2, etc.] 
+Regions in Scope	🇺🇸 USA 🇨🇦 Canada 🇪🇺 EU 🇬🇧 UK 🇨🇳 APAC 🌏 Other 
+Due Date	[MM-DD-YYYY] 
+
+2️⃣ Files to Attach 
+Type	Attach & Name 
+✅ Copy Document	DOCX / PDF / Image 
+✅ Final Artwork	PDF / AI / Flattened preview 
+(If artwork is layered, please attach both live file and flattened PDF.) 
+
+3️⃣ Review Steps & Outputs 
+Step	Reviewer Tasks	Deliverable 
+A. Copy Quality	• Check spelling / grammar / spacing / casing 
+• Ensure brand-tone (fun, approachable) 
+• Verify EN ↔ FR ↔ ES ↔ DE ↔ NL consistency	Copy Review Table 
+`Language 
+B. Claim Risk	Flag drug-like or unsubstantiated claims per region.	Risk note per language 
+C. 🆕 Label-Claim Conversion	Calculate: mL ÷ 29.5735 ≈ fl oz (±0.1 fl oz tolerance). 
+Flag mismatches in both copy doc and artwork (e.g., 5 mL must read 0.17 fl oz, not 0.7).	Add ❌ row in tables if values don’t align. 
+D. Artwork Match	Compare ALL fields (name, weight, warnings, icons, etc.)	Artwork Comparison Table 
+
+`Copy Doc 
+E. Font Size	Verify mandatory text ≥ 6 pt (≈ 2.12 mm).	Zoomed overlay if any text < 6 pt. 
+F. Barcode	Confirm UPC-A / EAN, quiet zone, scannability (ZXing / online reader).	Pass / fail + decoded digits 
+G. Visual Snapshots	Paste real screenshots for every ⚠️/❌ issue, with clear captions (what / where / fix).	Inline images in chat 
+H. Score & Summary	Score = Matches ÷ Checks × 100; list next steps.	Summary Table 
+`Area
+Quick-Reference Conversion Table 
+
+mL	Correct fl oz 
+5 mL	0.17 fl oz 
+10 mL	0.34 fl oz 
+15 mL	0.51 fl oz 
+30 mL	1.01 fl oz 
+50 mL	1.69 fl oz 
+150 mL	5.07 fl oz 
+
+4️⃣ Optional Fields 
+Version-Change Log (what changed this round) 
+Creative Brand-Voice Check (extra sign-off) 
+One-page PDF Summary Export (for vendor/archive) 
+
+5️⃣ Special Notes / Constraints 
+[Deadlines, retailer mandates, color limits, etc.] 
+Legend
+✅ Match  ⚠️ Needs Attention  ❌ Fix Requireds 
