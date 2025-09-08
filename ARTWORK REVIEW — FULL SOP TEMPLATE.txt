@@ -14,6 +14,10 @@ OUTPUT_CONTRACT:
     only_emit: ["step header line", "required table(s) or blocks"]   # no extra prose
     date_format_regex: "^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-(20\\d\\d)$"  # MM-DD-YYYY
     status_icons: ["✅","⚠️","❌"]  # global set; each step defines allowed subset
+    postprocess:
+      - value_regex: "[\\\\/]"
+        transform: "s#^.*[\\\\/]##"
+
   tables:
     ProjectHeader:
       headers: ["Field","Fill In"]
@@ -31,6 +35,18 @@ OUTPUT_CONTRACT:
         Risk Level: ["Low","Medium","High"]
         Action: ["Keep","Modify","Remove"]
       allowed_status: ["⚠️","❌"]   # ✅ appears only via the “no-risk” synthetic row below
+    C_LabelClaims:
+      headers: ["Language","Declared (fl oz)","Declared (mL)","Calculated (fl oz)","Δ (fl oz)","Status","Evidence (page/xywh/zone)","Confidence","Source"]
+      enums:
+        Language: ["EN","FR","ES","DE","Other"]
+        Source: ["EXTRACTED_TEXT","OCR_TEXT"]
+      allowed_status: ["✅","⚠️","❌"]
+      tolerances:
+        fl_oz_abs: 0.10
+      notes:
+        - "Only volume is in scope. Do not emit mass fields (g or weight oz)."
+
+
 
 GLOBAL RULES (R)
 R0 Preserve all emojis exactly as shown. Do not substitute or omit.
@@ -83,6 +99,93 @@ EXECUTION INSTRUCTION (non-output)
 - Do NOT display any rule numbers or references in the user-facing output.
 - Hard-fail validation if R10 hasn’t been performed before assigning ⚠️/❌.
 
+AUTOMATION_CLAUSES:
+  StepC_OCR_and_Extraction:
+    enabled: true
+
+    extractability_check:
+      try_standard_text_extraction: true
+      fail_if:
+        - "page_text is empty OR mostly non-alphanumeric"
+        - "fonts lack /ToUnicode mapping"
+      set_flag_when_failed: "EXTRACTABILITY=FAIL"
+      on_pass: "EXTRACTABILITY=PASS → run detection on EXTRACTED_TEXT"
+
+    ocr_fallback:
+      when: "EXTRACTABILITY=FAIL"
+      rasterize:
+        dpi: 600
+        mode: "grayscale"
+        zone_primary: "FOP.bottom_30_percent"
+        zone_fallback: "full_page"
+      preprocess: ["deskew(±2°)","adaptive_threshold(local_mean)","morph_open(denoise)"]
+      languages: ["eng","fra","spa","deu"]
+      token_stitch:
+        max_gap_px: 16        # join '5', '.', '3', 'OZ' → '5.3OZ'
+        normalize_spacing: true  # '5.3OZ' → '5.3 OZ'
+      decimals:
+        accept_commas: true    # '5,3' accepted
+        canonical: "dot"       # normalize to '5.3' for math; keep original in Evidence
+      confidence_min: 0.70
+      source_label: "OCR_TEXT"
+
+    detection_patterns:
+      # Apply to EXTRACTED_TEXT or OCR_TEXT (post-normalization).
+      fl_oz: '(?i)\\b(?:NET\\s*)?\\d{1,3}(?:[.,]\\d{1,2})\\s*(?:FL\\s*OZ|FL\\.?\\s*OZ\\.?)\\b'
+      mL: '(?i)\\b\\d{1,4}\\s*ML\\b'
+      line_heuristic:
+        within_px: 120
+        regex: '(?i)\\bNET\\s*\\d{1,3}(?:[.,]\\d{1,2})\\s*OZ\\b.*?\\(\\s*\\d{1,4}\\s*G\\s*\\)\\s*\\d{1,4}\\s*ML\\b'
+        effect: "boost_confidence"
+
+    recording_and_evidence:
+      record_exact_string: true       # keep the printed claim verbatim
+      evidence_fields: ["page","bbox_xywh_px@600dpi","zone"]
+      confidence_assignment: "min_token_confidence"
+      multi_candidate_resolution: "pick_highest_confidence_else_TBD_and_flag"
+
+    conversions_and_checks:
+      allow_mass_calculation: false
+      constants:
+        ML_PER_FL_OZ: 29.5735
+      rounding_decimals: 2
+      tolerances:
+        fl_oz_abs: 0.10
+        oz_abs: 0.10
+      rules:
+        - name: "volume_check"
+          if: "CopyDoc.mL exists AND Declared(fl oz) exists"
+          verify: "abs(Declared_fl_oz - (CopyDoc.mL / 29.5735)) <= 0.10"
+          status_pass: "✅"
+          status_fail: "❌"
+        - name: "volume_reference_only"
+          if: "CopyDoc.mL exists AND Declared(fl oz) missing"
+          action: "Calculate fl oz = mL / 29.5735; display for reference; no pass/fail"
+      decimal_commas_policy: "treat comma as dot for calculations; preserve original string in Evidence"
+
+    failure_handling:
+      if_confidence_below_threshold:
+        set_fields_to: "TBD"
+        note: "Flattened/outlined text; OCR confidence < 0.70. Manual Zoom & Verify required (200–400%)."
+        require_rule: "R10_ZOOM & VERIFY (MANDATORY)"
+      do_not_infer_units: true
+
+    output_mapping:
+      table: "C_LabelClaims"
+      populate:
+        Language: "detected language or reviewer-specified"
+        "Declared (fl oz)": "as printed or —"
+        "Declared (oz)": "as printed or —"
+        "Declared (g)": "as printed or —"
+        "Declared (mL)": "as printed or —"
+        "Calculated (fl oz)": "CopyDoc.mL / 29.5735 when mL available"
+        "Δ (fl oz)": "abs(Declared fl oz − Calculated fl oz) when both exist"
+        Status: "✅ if within tolerance; ❌ if outside; ⚠️ if TBD/ambiguous"
+        "Evidence (page/xywh/zone)": "page, bbox, and zone string"
+        Confidence: "0–1 (rounded to 2 decimals)"
+        Source: "EXTRACTED_TEXT or OCR_TEXT"
+
+
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 1️⃣ Project Header
@@ -134,6 +237,8 @@ Rules for Step A
 - Use “✅” if the line is both accurate in the Copy Document **and** matches the Artwork.  
 - One row per language for all languages. Do not paraphrase; quote all strings exactly.
 - Do not assess brand voice here; use 4️⃣ Creative Brand-Voice Check when requested.
+- Region(s) Impacted_regex: "^(?:[A-Z]{2})(?:,\\s*[A-Z]{2})*$"  # country abbreviations only (ISO-3166-1 alpha-2); flag emojis disallowed
+
 
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -166,6 +271,8 @@ Rules for Step C
 - Add a separate row for each distinct size/SKU found in BOTH Copy Doc and Artwork. If present in one but not the other, still list with a note.
 - If fl oz is printed but mL is missing (or vice versa), compute the missing side and mark ❌ unless both are present and within tolerance.
 - Do NOT use grams (G) as part of calculation
+- If EXTRACTABILITY=FAIL, invoke: AUTMATION_CLAUSES.StepC_OCR_and_Extraction
+- Always honor R10 ZOOM & VERIFY before assigning ⚠️/❌ when OCR confidence < 0.70.
 
 Quick-Reference — mL → fl oz (append verbatim)
 | mL | Correct fl oz |
@@ -351,3 +458,4 @@ Region Inference — Quick-Ref
 
 Legend
 ✅ Match / Pass  ⚠️ Needs Attention  ❌ Fix Required
+
