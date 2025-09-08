@@ -9,6 +9,29 @@ USAGE
 - Save this as a .txt file (UTF-8) and follow exactly. All outputs MUST use the schemas below.
 - Preserve all emojis and symbols exactly as shown. Do not add or remove columns.
 
+OUTPUT_CONTRACT:
+  general:
+    only_emit: ["step header line", "required table(s) or blocks"]   # no extra prose
+    date_format_regex: "^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-(20\\d\\d)$"  # MM-DD-YYYY
+    status_icons: ["✅","⚠️","❌"]  # global set; each step defines allowed subset
+  tables:
+    ProjectHeader:
+      headers: ["Field","Fill In"]
+      field_controls:
+        - field: "Round / Version"
+          allowed_placeholders: ["Unspecified"]     # only here; elsewhere use "TBD"
+        - field: "Due Date"
+          allowed_placeholders: ["TBD"]
+    A_CopyQuality:
+      headers: ["Language","Original Text","Recommendation","Status","Evidence (page/line)"]
+      allowed_status: ["✅","⚠️","❌"]
+    B_ClaimRisk:
+      headers: ["Language","Claim (quote)","Risk Level","Rationale","Region(s) Impacted","Action","Status"]
+      enums:
+        Risk Level: ["Low","Medium","High"]
+        Action: ["Keep","Modify","Remove"]
+      allowed_status: ["⚠️","❌"]   # ✅ appears only via the “no-risk” synthetic row below
+
 GLOBAL RULES (R)
 R0 Preserve all emojis exactly as shown. Do not substitute or omit.
 R1 Output ONLY the step header line plus the required table(s) or blocks—no extra prose before/after.
@@ -58,6 +81,7 @@ EXECUTION INSTRUCTION (non-output)
 - If any validation fails, stop and correct before producing output.
 - For every step below, apply the relevant Global Rules (R0–R18) internally.
 - Do NOT display any rule numbers or references in the user-facing output.
+- Hard-fail validation if R10 hasn’t been performed before assigning ⚠️/❌.
 
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -92,6 +116,7 @@ Sourcing Hierarchy for Step 1
 
 Rules for Step 2
 - ❌ if a required file is missing or unreadable; ✅ only when fully correct and accessible.
+- If artwork is layered, attach both the live design file (.ai) and a flattened PDF proof.
 
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -108,6 +133,7 @@ Rules for Step A
 - Only after confirming accuracy in the Copy Document should you check the matching Artwork file.
 - Use “✅” if the line is both accurate in the Copy Document **and** matches the Artwork.  
 - One row per language for all languages. Do not paraphrase; quote all strings exactly.
+- Do not assess brand voice here; use 4️⃣ Creative Brand-Voice Check when requested.
 
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -115,7 +141,7 @@ B. Claim Risk
 
 | Language | Claim (quote) | Risk Level | Rationale | Region(s) Impacted | Action | Status |
 |---|---|---|---|---|---|---|
-| EN | “<exact claim>” | Low/Medium/High | <why risky or compliant> | <All/USA/EU/CA/UK/etc.> | Keep/Modify/Remove | ⚠️/❌ |
+| EN | “<exact claim>” | Low/Medium/High | <-/why risky or compliant> | <All/USA/EU/CA/UK/etc.> | Keep/Modify/Remove | ✅/⚠️/❌ |
 
 Rules for Step B
 - Quote claims verbatim. Group identical claims; otherwise separate rows.
@@ -125,7 +151,6 @@ Rules for Step B
   • Medium: Performance claims implying measurable outcomes without visible substantiation.
   • High: Drug-like/therapeutic claims, superiority claims without substantiation, regulated terms.
 - Action: Keep (no change), Modify (add qualifier/footnote), Remove (not permitted).
-- If no risky claims, include a single row “No risky claims identified” with ✅.
 
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -203,7 +228,7 @@ F. Barcode
 | UPC-A / EAN-13 | <digits> | Yes/No | <value> | <value> | <value> | Yes/No | Pass/Fail |
 
 Rules for Step F
-- Decode using a standard reader; record EXACT digits (including leading zeros). Human-readable text is implied by digits.
+- Decode using a standard reader(e.g., ZXing or equivalent); record EXACT digits (including leading zeros). Human-readable text is implied by digits.
 - X-Dim and Quiet Zone must meet symbology standards (e.g., UPC-A quiet zone ≥ 10× module). If unknown, record “TBD” and mark ⚠️ with rationale.
 - Print Contrast: “Yes” if high contrast on intended substrate; “No” if low contrast/patterned background.
 - Scan Test: Pass only if decoded from representative print or high-quality proof. Digital-only → ⚠️ with note “digital proof only.”
@@ -326,56 +351,3 @@ Region Inference — Quick-Ref
 
 Legend
 ✅ Match / Pass  ⚠️ Needs Attention  ❌ Fix Required
-
-🆕 NEW PROJECT – PACKAGING & COPY VERIFICATION 
-(Packaging Dev · Regulatory Compliance · Creative Tone · Marketing Claims) 
-
-1️⃣ Project Header 
-Field	Fill In 
-Project Name	[e.g., amika un.done Texture Spray 5.3 oz] 
-Round / Version	[Round 1, v2, etc.] 
-Regions in Scope	🇺🇸 USA 🇨🇦 Canada 🇪🇺 EU 🇬🇧 UK 🇨🇳 APAC 🌏 Other 
-Due Date	[MM-DD-YYYY] 
-
-2️⃣ Files to Attach 
-Type	Attach & Name 
-✅ Copy Document	DOCX / PDF / Image 
-✅ Final Artwork	PDF / AI / Flattened preview 
-(If artwork is layered, please attach both live file and flattened PDF.) 
-
-3️⃣ Review Steps & Outputs 
-Step	Reviewer Tasks	Deliverable 
-A. Copy Quality	• Check spelling / grammar / spacing / casing 
-• Ensure brand-tone (fun, approachable) 
-• Verify EN ↔ FR ↔ ES ↔ DE ↔ NL consistency	Copy Review Table 
-`Language 
-B. Claim Risk	Flag drug-like or unsubstantiated claims per region.	Risk note per language 
-C. 🆕 Label-Claim Conversion	Calculate: mL ÷ 29.5735 ≈ fl oz (±0.1 fl oz tolerance). 
-Flag mismatches in both copy doc and artwork (e.g., 5 mL must read 0.17 fl oz, not 0.7).	Add ❌ row in tables if values don’t align. 
-D. Artwork Match	Compare ALL fields (name, weight, warnings, icons, etc.)	Artwork Comparison Table 
-
-`Copy Doc 
-E. Font Size	Verify mandatory text ≥ 6 pt (≈ 2.12 mm).	Zoomed overlay if any text < 6 pt. 
-F. Barcode	Confirm UPC-A / EAN, quiet zone, scannability (ZXing / online reader).	Pass / fail + decoded digits 
-G. Visual Snapshots	Paste real screenshots for every ⚠️/❌ issue, with clear captions (what / where / fix).	Inline images in chat 
-H. Score & Summary	Score = Matches ÷ Checks × 100; list next steps.	Summary Table 
-`Area
-Quick-Reference Conversion Table 
-
-mL	Correct fl oz 
-5 mL	0.17 fl oz 
-10 mL	0.34 fl oz 
-15 mL	0.51 fl oz 
-30 mL	1.01 fl oz 
-50 mL	1.69 fl oz 
-150 mL	5.07 fl oz 
-
-4️⃣ Optional Fields 
-Version-Change Log (what changed this round) 
-Creative Brand-Voice Check (extra sign-off) 
-One-page PDF Summary Export (for vendor/archive) 
-
-5️⃣ Special Notes / Constraints 
-[Deadlines, retailer mandates, color limits, etc.] 
-Legend
-✅ Match  ⚠️ Needs Attention  ❌ Fix Requireds 
