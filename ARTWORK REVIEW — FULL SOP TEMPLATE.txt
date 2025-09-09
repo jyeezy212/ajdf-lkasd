@@ -17,8 +17,26 @@ OUTPUT_CONTRACT:
     postprocess:
       - value_regex: "[\\\\/]"
         transform: "s#^.*[\\\\/]##"
+      - id: "basename_only"
+        headers_regex: "(?i)^(file(\\s*name)?|attachment|design\\s*file|proof\\s*file)$"
+        transform: "s#^.*[\\\\/]##"     # strip everything up to last / or \
+        required: true                  # MUST run before emit
+    validators:
+      - name: "filename_has_no_path_separators"
+        headers_regex: "(?i)^(file(\\s*name)?|attachment|design\\s*file|proof\\s*file)$"
+        must_match_regex: "^[^/\\\\]+$"  # only basename; no / or \
+        on_fail: 'error: "Display only the file name (strip directories with basename transform)."'
+    output_lints:
+      - name: "no_paths_in_filename_cells"
+        scope_headers_regex: "(?i)^(file(\\s*name)?|attachment|design\\s*file|proof\\s*file)$"
+        find: "[\\\\/]"                  # any slash/backslash means a path
+        action: 'error: "Found a path. Use basename only (e.g., amika-proof.pdf)."'
+
 
   tables:
+- The "Status" column must ONLY contain one of the following symbols: 
+  ✅ (Pass), ⚠️ (Issue/Needs Attention), ❌ (Fail/Blocker).
+- If Evidence/Notes is not provided in the default table, add a "Notes" column specifically for such details.
     ProjectHeader:
       headers: ["Field","Fill In"]
       field_controls:
@@ -45,8 +63,6 @@ OUTPUT_CONTRACT:
         fl_oz_abs: 0.10
       notes:
         - "Only volume is in scope. Do not emit mass fields (g or weight oz)."
-
-
 
 GLOBAL RULES (R)
 R0 Preserve all emojis exactly as shown. Do not substitute or omit.
@@ -89,7 +105,7 @@ R18 Step/Scope Isolation
 - Output must conform exactly to the current step's table headers, column order, allowed icons, and language scope.
 - No inferred carry-overs (e.g., multi-language checks in 3A do not imply multi-language outputs in 3B if 3B is EN-only).
 
-EXECUTION INSTRUCTION (non-output)
+EXECUTION INSTRUCTION
 - Before rendering each step, validate:
   - Schema match: headers and column order exactly equal to that step's schema.
   - Language scope: enforce step-specific scope (e.g., 3B = EN-only).
@@ -98,6 +114,11 @@ EXECUTION INSTRUCTION (non-output)
 - For every step below, apply the relevant Global Rules (R0–R18) internally.
 - Do NOT display any rule numbers or references in the user-facing output.
 - Hard-fail validation if R10 hasn’t been performed before assigning ⚠️/❌.
+  RENDER_PIPELINE:
+    - "apply OUTPUT_CONTRACT.general.postprocess (required_only=true) to ALL cells"
+    - "run OUTPUT_CONTRACT.general.validators"
+    - "run OUTPUT_CONTRACT.general.output_lints"
+    - "emit tables/blocks"
 
 AUTOMATION_CLAUSES:
   StepC_OCR_and_Extraction:
@@ -166,7 +187,7 @@ AUTOMATION_CLAUSES:
     failure_handling:
       if_confidence_below_threshold:
         set_fields_to: "TBD"
-        note: "Flattened/outlined text; OCR confidence < 0.70. Manual Zoom & Verify required (200–400%)."
+        note: "Flattened/outlined text; OCR confidence < 0.70. Automatic Zoom & Verify required (200–400%)."
         require_rule: "R10_ZOOM & VERIFY (MANDATORY)"
       do_not_infer_units: true
 
@@ -220,6 +241,7 @@ Sourcing Hierarchy for Step 1
 Rules for Step 2
 - ❌ if a required file is missing or unreadable; ✅ only when fully correct and accessible.
 - If artwork is layered, attach both the live design file (.ai) and a flattened PDF proof.
+- Filenames MUST be basename only (no directories or prefixes). If a path is present, normalize via OUTPUT_CONTRACT.general.postprocess[id=basename_only]; if any slash remains, set value to TBD and add ⚠️ “Filename includes a path; manual fix required.”
 
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -261,7 +283,7 @@ Rules for Step B
 
 C. Label-Claim Conversion
 
-| Source | Declared (mL) | Calculated (fl oz) | Declared (fl oz) | Within ±0.10 | Status | Result |
+| Source | Declared (mL) | Calculated (fl oz) | Declared (fl oz) | Within ±0.10 | Status | Notes |
 |---|---|---|---|---|---|---|
 | Copy Doc / Artwork | <e.g., 150> | <mL ÷ 29.5735 → 2 decimals> | <as printed> | Yes/No | ✅/❌ | Suggested action item |
 
@@ -272,7 +294,7 @@ Rules for Step C
 - If fl oz is printed but mL is missing (or vice versa), compute the missing side and mark ❌ unless both are present and within tolerance.
 - Do NOT use grams (G) as part of calculation
 - If EXTRACTABILITY=FAIL, invoke: AUTMATION_CLAUSES.StepC_OCR_and_Extraction
-- Always honor R10 ZOOM & VERIFY before assigning ⚠️/❌ when OCR confidence < 0.70.
+- Always honor R10 ZOOM & VERIFY before assigning ❌ when OCR confidence < 0.70.
 
 Quick-Reference — mL → fl oz (append verbatim)
 | mL | Correct fl oz |
@@ -458,4 +480,5 @@ Region Inference — Quick-Ref
 
 Legend
 ✅ Match / Pass  ⚠️ Needs Attention  ❌ Fix Required
+
 
