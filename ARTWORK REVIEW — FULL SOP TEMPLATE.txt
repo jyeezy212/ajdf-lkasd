@@ -341,6 +341,7 @@ E. Font Size
 | <e.g., INGREDIENTS> | <USA cosmetics> | 6.0 | <measured> | Vector/Bitmap | ✅/❌ | <G-###> |
 
 Rules for Step E
+run: extractability_check → ocr_fallback (mandatory before Step E execution)
 - Minimum: 6.0 pt (≈ 2.12 mm) for mandatory text unless stricter regional rules apply.
 - Measurement:
   • Vector: read font size property from live text.
@@ -480,5 +481,6 @@ Region Inference — Quick-Ref
 
 Legend
 ✅ Match / Pass  ⚠️ Needs Attention  ❌ Fix Required
+
 
 
