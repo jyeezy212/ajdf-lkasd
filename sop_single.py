@@ -366,15 +366,6 @@ def _format_regions_with_flags(regions):
         parts.append(f"{flag} {r}".strip())
     return ", ".join(parts)
 
-def _format_regions_with_flags(regions):
-    # Graceful: show the name even if a flag isn’t mapped
-    parts = []
-    for r in regions or []:
-        flag = REGION_FLAGS.get(r, "")
-        parts.append(f"{flag} {r}".strip())
-    return ", ".join(parts)
-
-
 def _require_jsonschema():
     try:
         from jsonschema import Draft202012Validator  # noqa: F401
