@@ -211,23 +211,22 @@ AUTOMATION_CLAUSES:
 
 1️⃣ Project Header
 
-| Field | Fill In |
-|---|---|
-| Project Name | <derived from copy/artwork files only> |
-| Round / Version | <as provided; if unknown write “Unspecified”> |
-| Regions in Scope | <flags/regions; append “(inferred)” if derived via R12; else “TBD”> |
+| Field | Fill In | Notes |
+|---|---|---|
+| Project Name | <derived from artwork/copy files only> |
+| Round / Version | <as provided> |
+| Regions in Scope | <regions> |
 | Due Date | <MM-DD-YYYY; else “TBD”> |
 
-Helper — Use this exact line for the “Regions in Scope” row:
-| Regions in Scope | <flags/regions; append “(inferred)” if derived via R12; else “TBD”> |
-
 Sourcing Hierarchy for Step 1
-- Project Name: Copy Doc > Artwork filename > Artwork display name on FOP; else “TBD”.
+- Project Name: Artwork display name on FOP > Artwork filename > Copy Doc; else “TBD”.
 - Round/Version: Request text, file naming, or visible version notes; else “Unspecified”.
-- Regions: If explicit, list them. If not explicit, infer per R12 and label “(inferred)”; if cues conflict/ambiguous, set “TBD” and record evidence in H → Notes.
+- Regions:
+    -USA is always in scope, never inferred
+    -Display flag emoji preceeding region name, use legend at end of SOP for each respective region
+    -If explicit, list them. If not explicit, infer per R12 and label “(inferred)”
+    -If cues conflict/ambiguous, set “Unspecified” and record evidence in H → Notes.
 - Due Date: Request text, tracker, or filename date; else “TBD”.
-
-(Examples are not for output: Regions may be flags like 🇺🇸 🇨🇦 🇪🇺 🇬🇧 or ISO region names if no flags are present.)
 
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -474,13 +473,17 @@ F. File naming (suggested)
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 Region Inference — Quick-Ref
-• “amika … USA” → 🇺🇸 USA (inferred)
-• “BIORIUS … Wavre, BE (EU)” → 🇪🇺 EU (inferred)
-• “UK: London … GB” or UK RP icon → 🇬🇧 UK (inferred)
-• EN/FR bilingual compliance blocks → 🇨🇦 Canada (inferred)
+• “BIORIUS … Wavre, BE (EU)” → EU (inferred)
+• “UK: London … GB” or UK RP icon → UK (inferred)
+• EN/FR bilingual compliance blocks → Canada (inferred)
 
 Legend
 ✅ Match / Pass  ⚠️ Needs Attention  ❌ Fix Required
+USA = 🇺🇸
+EU = 🇪🇺
+UK = 🇬🇧
+Canada = 🇨🇦
+
 
 
 
