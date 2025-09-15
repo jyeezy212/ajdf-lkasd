@@ -341,14 +341,30 @@ STATUS_EMOJI = {
     "FYI": "FYI"
 }
 
+# Use Unicode escapes so flags render reliably in all editors/terminals.
 REGION_FLAGS = {
-    "USA": "🇺🇸",
-    "EU":  "🇪🇺",
-    "UK":  "🇬🇧",
-    "CA":  "🇨🇦",
-    "AU":  "🇦🇺",
-    "Other": "🌐",
+    "US": "\U0001F1FA\U0001F1F8",          # 🇺🇸
+    "USA": "\U0001F1FA\U0001F1F8",
+    "UNITED STATES": "\U0001F1FA\U0001F1F8",
+
+    "EU": "\U0001F1EA\U0001F1FA",          # 🇪🇺
+
+    "CA": "\U0001F1E8\U0001F1E6",          # 🇨🇦
+    "CANADA": "\U0001F1E8\U0001F1E6",
+
+    "UK": "\U0001F1EC\U0001F1E7",          # 🇬🇧
+    "GB": "\U0001F1EC\U0001F1E7",
+
+    "OTHER": "\U0001F310",                 # 🌐
 }
+
+def _format_regions_with_flags(regions):
+    parts = []
+    for r in regions or []:
+        key = (r or "").strip().upper()
+        flag = REGION_FLAGS.get(key, REGION_FLAGS.get("OTHER", ""))
+        parts.append(f"{flag} {r}".strip())
+    return ", ".join(parts)
 
 def _format_regions_with_flags(regions):
     # Graceful: show the name even if a flag isn’t mapped
