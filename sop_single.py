@@ -344,8 +344,6 @@ STATUS_EMOJI = {
 # Use Unicode escapes so flags render reliably in all editors/terminals.
 REGION_FLAGS = {
     "US": "\U0001F1FA\U0001F1F8",          # 🇺🇸
-    "USA": "\U0001F1FA\U0001F1F8",
-    "UNITED STATES": "\U0001F1FA\U0001F1F8",
 
     "EU": "\U0001F1EA\U0001F1FA",          # 🇪🇺
 
@@ -358,12 +356,33 @@ REGION_FLAGS = {
     "OTHER": "\U0001F310",                 # 🌐
 }
 
+# Canonical flags: keys match what you want to treat as the single source of truth.
+REGION_FLAGS = {
+    "USA": "\U0001F1FA\U0001F1F8",  # 🇺🇸
+    "EU":  "\U0001F1EA\U0001F1FA",  # 🇪🇺
+    "UK":  "\U0001F1EC\U0001F1E7",  # 🇬🇧
+    "CA":  "\U0001F1E8\U0001F1E6",  # 🇨🇦
+    "OTHER": "\U0001F310",          # 🌐
+}
+
+# Aliases → canonical keys (so you don’t need duplicates in REGION_FLAGS)
+REGION_ALIASES = {
+    "US": "USA",
+    "UNITED STATES": "USA",
+    "EUOROPEAN UNION": "EU",
+    "UNITED KINGDOM": "UK",
+    "CANADA": "CA"
+}
+
 def _format_regions_with_flags(regions):
     parts = []
     for r in regions or []:
-        key = (r or "").strip().upper()
-        flag = REGION_FLAGS.get(key, REGION_FLAGS.get("OTHER", ""))
-        parts.append(f"{flag} {r}".strip())
+        # Normalize
+        key = (r or "").strip().upper().replace(".", "")
+        key = REGION_ALIASES.get(key, key)  # map aliases to canonical
+        # Lookup with fallback
+        flag = REGION_FLAGS.get(key, REGION_FLAGS["OTHER"])
+        parts.append(f"{flag} {r}".strip())  # keep original label in output
     return ", ".join(parts)
 
 def _require_jsonschema():
