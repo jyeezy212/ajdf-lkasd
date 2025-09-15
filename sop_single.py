@@ -341,21 +341,6 @@ STATUS_EMOJI = {
     "FYI": "FYI"
 }
 
-# Use Unicode escapes so flags render reliably in all editors/terminals.
-REGION_FLAGS = {
-    "US": "\U0001F1FA\U0001F1F8",          # 🇺🇸
-
-    "EU": "\U0001F1EA\U0001F1FA",          # 🇪🇺
-
-    "CA": "\U0001F1E8\U0001F1E6",          # 🇨🇦
-    "CANADA": "\U0001F1E8\U0001F1E6",
-
-    "UK": "\U0001F1EC\U0001F1E7",          # 🇬🇧
-    "GB": "\U0001F1EC\U0001F1E7",
-
-    "OTHER": "\U0001F310",                 # 🌐
-}
-
 # Canonical flags: keys match what you want to treat as the single source of truth.
 REGION_FLAGS = {
     "USA": "\U0001F1FA\U0001F1F8",  # 🇺🇸
@@ -369,7 +354,7 @@ REGION_FLAGS = {
 REGION_ALIASES = {
     "US": "USA",
     "UNITED STATES": "USA",
-    "EUOROPEAN UNION": "EU",
+    "EUROPEAN UNION": "EU",
     "UNITED KINGDOM": "UK",
     "CANADA": "CA"
 }
