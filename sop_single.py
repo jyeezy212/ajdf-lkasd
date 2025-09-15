@@ -341,6 +341,24 @@ STATUS_EMOJI = {
     "FYI": "FYI"
 }
 
+REGION_FLAGS = {
+    "USA": "🇺🇸",
+    "EU":  "🇪🇺",
+    "UK":  "🇬🇧",
+    "CA":  "🇨🇦",
+    "AU":  "🇦🇺",
+    "Other": "🌐",
+}
+
+def _format_regions_with_flags(regions):
+    # Graceful: show the name even if a flag isn’t mapped
+    parts = []
+    for r in regions or []:
+        flag = REGION_FLAGS.get(r, "")
+        parts.append(f"{flag} {r}".strip())
+    return ", ".join(parts)
+
+
 def _require_jsonschema():
     try:
         from jsonschema import Draft202012Validator  # noqa: F401
@@ -376,7 +394,7 @@ def render_step1(d):
         ["Field", "Fill In"],
         ["Project Name", d["project_name"]],
         ["Round / Version", d["round_version"]],
-        ["Regions in Scope", ", ".join(d["regions_in_scope"])],
+        ["Regions in Scope", _format_regions_with_flags(d["regions_in_scope"])],
         ["Due Date", d["due_date"]],
     ]
     return _print_table("1️⃣ Project Header", rows)
